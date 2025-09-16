@@ -22,8 +22,18 @@ target_dir = config["config"]["target_dir"]
 def main():
     """Run the main program"""
     for item in pathlib.Path(source_dir).iterdir():
-        shutil.move(str(pathlib.Path(source_dir / item)), str(target_dir))
+        dest_path = pathlib.Path(target_dir) / item.name
+        dest_path = get_unique_path(dest_path)
+        shutil.move(str(item), str(dest_path))
 
+def get_unique_path(dest_path):
+    counter = 1
+    stem = dest_path.stem
+    suffix = dest_path.suffix
+    while dest_path.exists():
+        dest_path = dest_path.with_name(f"{stem}_{counter}{suffix}")
+        counter += 1
+    return dest_path
 
 # ----------------------------------------------------------
 if __name__ == "__main__":
